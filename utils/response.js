@@ -3,7 +3,7 @@ const success = (req, res, message, status) => {
   let statusCode = status || 200;
   let statusMessage = message || "";
 
-  res.status(statusCode).send({
+  res.status(statusCode).json({
     error: false,
     statusCode,
     body: statusMessage,
@@ -12,7 +12,7 @@ const success = (req, res, message, status) => {
 
 // Funcion para personalizar mensaje error
 const error = (req, res, message = "Internal Server Error", status = 500) => {
-  res.status(statusCode).send({
+  res.status(status).json({
     error: true,
     statusCode: status,
     body: message,

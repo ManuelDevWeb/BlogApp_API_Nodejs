@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { connectionDB as db } from "../db/index.js";
 
 // Respuestas personalizadas
-import { success, error } from "../utils/response";
+import { success, error } from "../utils/response.js";
 
 // Funcion para registrar usuario
 const register = (req, res) => {
@@ -42,14 +42,14 @@ const register = (req, res) => {
       db.query(
         queryInsert,
         // El arreglo values equivale al valor del ?
-        values,
+        [values],
         (err, data) => {
           if (err) {
             // Retornamos respuesta personalizada
             return error(req, res, err.message, 500);
           }
 
-          if (data.length) {
+          if (data) {
             // Retornamos respuesta personalizada
             return success(req, res, "User has been created ", 200);
           }
