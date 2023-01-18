@@ -9,6 +9,9 @@ const environments = {
     password: process.env.MYSQL_PASSWORD || "admin123",
     database: process.env.MYSQL_DB || "db_blog",
   },
+  jwt: {
+    secretKey: process.env.SECRET_KEY_JWT || "jwtKey",
+  },
 };
 
 export { environments };

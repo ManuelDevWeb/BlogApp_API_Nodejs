@@ -1,8 +1,12 @@
 // Bcrypt
 import bcrypt from "bcryptjs";
+// JWT
+import jwt from "jsonwebtoken";
 
 // Config DB
 import { connectionDB as db } from "../db/index.js";
+// Environments
+import { environments } from "../config.js";
 
 // Respuestas personalizadas
 import { success, error } from "../utils/response.js";
@@ -11,7 +15,7 @@ import { success, error } from "../utils/response.js";
 const register = (req, res) => {
   const { email, username, password } = req.body;
 
-  // Valida existing user
+  // Validate existing user
   const queryFind = "SELECT * FROM users WHERE email=? OR username=?";
 
   db.query(
@@ -20,6 +24,7 @@ const register = (req, res) => {
     [email, username],
     (err, data) => {
       if (err) {
+        console.log("err1", err);
         // Retornamos respuesta personalizada
         return error(req, res, err.message, 500);
       }
@@ -60,7 +65,54 @@ const register = (req, res) => {
 };
 
 // Funcion para iniciar sesion
-const login = (req, res) => {};
+const login = (req, res) => {
+  // Validate existing user
+  const queryFind = "SELECT * FROM users WHERE username=?";
+  db.query(
+    queryFind,
+    // Equivale al valor del ?
+    [req.body.username],
+    (err, data) => {
+      if (err) {
+        // Retornamos respuesta personalizada
+        return error(req, res, err.message, 500);
+      }
+
+      if (data.length === 0) {
+        // Retornamos respuesta personalizada
+        return error(
+          req,
+          res,
+          `User with username ${req.body.username} doesn't exist`,
+          404
+        );
+      }
+
+      // Compare password
+      const isPasswordCorrect = bcrypt.compareSync(
+        req.body.password,
+        data[0].password
+      );
+
+      if (!isPasswordCorrect) {
+        // Retornamos respuesta personalizada
+        return error(req, res, "Invalid credentials", 400);
+      }
+
+      // Create token
+      const token = jwt.sign({ id: data[0].id }, environments.jwt.secretKey);
+      const { password, ...otherInformation } = data[0];
+
+      // Return response in cookie
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .status(200)
+        .json(otherInformation);
+    }
+  );
+};
 
 // Funcion para cerrar sesion
 const logout = (req, res) => {};
