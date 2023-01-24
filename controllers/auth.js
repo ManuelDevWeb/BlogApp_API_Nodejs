@@ -24,7 +24,6 @@ const register = (req, res) => {
     [email, username],
     (err, data) => {
       if (err) {
-        console.log("err1", err);
         // Retornamos respuesta personalizada
         return error(req, res, err.message, 500);
       }
@@ -115,6 +114,15 @@ const login = (req, res) => {
 };
 
 // Funcion para cerrar sesion
-const logout = (req, res) => {};
+const logout = (req, res) => {
+  // Clear cookie
+  res
+    .clearCookie("access_token", {
+      sameSite: "none",
+      secure: true,
+    })
+    .status(200)
+    .json("User has been logged out.");
+};
 
 export { register, login, logout };
