@@ -33,7 +33,7 @@ const getPosts = (req, res) => {
 const getPost = (req, res) => {
   // Query para obtener un post especifico
   const query =
-    "SELECT `username`,`title`,`desc`,p.image, u.image as userImage,`cat`,`date_post` FROM users u JOIN posts p ON u.id=p.uid WHERE p.id=?";
+    "SELECT p.id, `username`,`title`,`desc`,p.image, u.image as userImage,`cat`,`date_post` FROM users u JOIN posts p ON u.id=p.uid WHERE p.id=?";
 
   db.query(
     query,

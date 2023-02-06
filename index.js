@@ -4,6 +4,8 @@ import express from "express";
 import cors from "cors";
 // Importando cookie parser
 import cookieParser from "cookie-parser";
+// Importando multer
+import multer from "multer";
 
 // Routes
 import authRoutes from "./routes/auth.js";
@@ -20,7 +22,7 @@ app.use(cookieParser());
 
 // Configuración CORS
 // Dominios permitidos (Para probar desde postman quitar esta configuración)
-const whiteList = ["http://localhost:3000"];
+const whiteList = ["http://localhost:3000", "https://localhost:3000"];
 const corsOptions = {
   // Verifica que el origen de la petición este en la lista blanca
   origin: function (origin, callback) {
@@ -35,6 +37,25 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../client/public/upload");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + file.originalname);
+  },
+});
+
+// Indicando el destino de los archivos a subir
+const upload = multer({ storage });
+
+// Endpoint para la subida de imagenes
+app.post("/api/upload", upload.single("file"), function (req, res) {
+  const file = req.file;
+
+  res.status(200).json(file.filename);
+});
 
 // ROUTES
 app.use("/api/auth", authRoutes);
