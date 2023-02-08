@@ -133,7 +133,7 @@ const updatePost = (req, res) => {
   const values = [req.body.title, req.body.desc, req.body.cat, req.body.image];
 
   db.query(
-    queryInsert,
+    queryUpdate,
     // El arreglo values equivale al valor del ?
     [...values, postId, req.body.uid],
     (err, data) => {
