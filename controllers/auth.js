@@ -55,7 +55,7 @@ const register = (req, res) => {
 
           if (data) {
             // Retornamos respuesta personalizada
-            return success(req, res, "User has been created ", 200);
+            return success(req, res, "User has been created", 200);
           }
         }
       );

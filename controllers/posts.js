@@ -51,7 +51,38 @@ const getPost = (req, res) => {
 };
 
 // Funcion para crear un post
-const addPost = (req, res) => {};
+const addPost = (req, res) => {
+  // TODO: Validate if token exist
+
+  // Query para agregar nuevo post
+  const queryInsert =
+    " INSERT INTO posts(`title`,`desc`,`image`,`cat`,`date_post`,`uid`) VALUES (?)";
+
+  const values = [
+    req.body.title,
+    req.body.desc,
+    req.body.image,
+    req.body.cat,
+    req.body.date_post,
+    req.body.uid,
+  ];
+
+  db.query(
+    queryInsert,
+    // El arreglo values equivale al valor del ?
+    [values],
+    (err, data) => {
+      if (err) {
+        // Retornamos respuesta personalizada
+        return error(req, res, err.message, 500);
+      }
+
+      if (data) {
+        return success(req, res, "Post has been created", 200);
+      }
+    }
+  );
+};
 
 // Funcion para eliminar un post
 const deletePost = (req, res) => {
@@ -90,6 +121,32 @@ const deletePost = (req, res) => {
 };
 
 // Funcion para actualizar un post
-const updatePost = (req, res) => {};
+const updatePost = (req, res) => {
+  const postId = req.params.id;
+
+  // TODO: Validate if token exist
+
+  // Query para agregar nuevo post
+  const queryUpdate =
+    " UPDATE posts SET `title`=?,`desc`=?, `cat`=?, `image`=? WHERE `id`=? AND `uid`=?";
+
+  const values = [req.body.title, req.body.desc, req.body.cat, req.body.image];
+
+  db.query(
+    queryInsert,
+    // El arreglo values equivale al valor del ?
+    [...values, postId, req.body.uid],
+    (err, data) => {
+      if (err) {
+        // Retornamos respuesta personalizada
+        return error(req, res, err.message, 500);
+      }
+
+      if (data) {
+        return success(req, res, "Post has been updated", 200);
+      }
+    }
+  );
+};
 
 export { getPosts, getPost, addPost, deletePost, updatePost };
